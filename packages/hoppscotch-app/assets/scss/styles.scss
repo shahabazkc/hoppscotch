@@ -15,6 +15,7 @@
 
 ::-webkit-scrollbar-track {
   @apply bg-transparent;
+  @apply border-solid border-l border-t-0 border-b-0 border-r-0 border-dividerLight;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -27,17 +28,17 @@
 
 ::-webkit-scrollbar {
   @apply w-4;
-  @apply h-4;
+  @apply h-0;
 }
 
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+// .hide-scrollbar {
+//   -ms-overflow-style: none;
+//   scrollbar-width: none;
+// }
 
-.hide-scrollbar::-webkit-scrollbar {
-  @apply hidden;
-}
+// .hide-scrollbar::-webkit-scrollbar {
+//   @apply hidden;
+// }
 
 input::placeholder,
 textarea::placeholder,
@@ -460,6 +461,17 @@ pre.ace_editor {
   }
 }
 
+.cm-editor {
+  .cm-line::selection {
+    background-color: var(--accent-dark-color) !important;
+    color: var(--accent-contrast-color) !important;
+  }
+  .cm-line ::selection {
+    background-color: var(--accent-dark-color) !important;
+    color: var(--accent-contrast-color) !important;
+  }
+}
+
 .shortcut-key {
   @apply inline-flex;
   @apply font-sans;
@@ -485,9 +497,8 @@ details summary::-webkit-details-marker {
   }
 }
 
-// https://pqina.nl/blog/fix-google-mobile-usability-issues/
-:where(body, iframe, pre, img, svg, video, canvas, select) {
-  @apply max-w-full;
-  @apply overflow-auto;
-  @apply break-words;
+.env-highlight {
+  * {
+    @apply text-accentContrast;
+  }
 }

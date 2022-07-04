@@ -1,6 +1,10 @@
 <template>
   <div v-if="show">
-    <SmartTabs :id="'collections_tab'" v-model="selectedCollectionTab">
+    <SmartTabs
+      :id="'collections_tab'"
+      v-model="selectedCollectionTab"
+      render-inactive-tabs
+    >
       <SmartTab
         :id="'my-collections'"
         :label="`${$t('collection.my_collections')}`"
@@ -70,6 +74,7 @@ import { onLoggedIn } from "~/helpers/fb/auth"
 import { currentUserInfo$ } from "~/helpers/teams/BackendUserInfo"
 import TeamListAdapter from "~/helpers/teams/TeamListAdapter"
 import { useReadonlyStream } from "~/helpers/utils/composables"
+import { useLocalState } from "~/newstore/localstate"
 
 type TeamData = GetMyTeamsQuery["myTeams"][number]
 
@@ -94,7 +99,19 @@ const emit = defineEmits<{
 const currentUser = useReadonlyStream(currentUserInfo$, null)
 
 const adapter = new TeamListAdapter(true)
-const myTeams = useReadonlyStream(adapter.teamList$, [])
+const myTeams = useReadonlyStream(adapter.teamList$, null)
+const REMEMBERED_TEAM_ID = useLocalState("REMEMBERED_TEAM_ID")
+let teamListFetched = false
+
+watch(myTeams, (teams) => {
+  if (teams && !teamListFetched) {
+    teamListFetched = true
+    if (REMEMBERED_TEAM_ID.value && currentUser) {
+      const team = teams.find((t) => t.id === REMEMBERED_TEAM_ID.value)
+      if (team) updateSelectedTeam(team)
+    }
+  }
+})
 
 onLoggedIn(() => {
   adapter.initialize()
@@ -112,6 +129,7 @@ const updateCollectionsType = (tabID: string) => {
 const options = ref<any | null>(null)
 
 const updateSelectedTeam = (team: TeamData | undefined) => {
+  REMEMBERED_TEAM_ID.value = team?.id
   emit("update-selected-team", team)
 }
 

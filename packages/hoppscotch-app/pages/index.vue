@@ -25,11 +25,11 @@ import {
   watch,
 } from "@nuxtjs/composition-api"
 import { Subscription } from "rxjs"
-import isEqual from "lodash/isEqual"
 import {
   HoppRESTRequest,
   HoppRESTAuthOAuth2,
   safelyExtractRESTRequest,
+  isEqualHoppRESTRequest,
 } from "@hoppscotch/data"
 import {
   getRESTRequest,
@@ -102,8 +102,7 @@ function setupRequestSync(
     ) {
       const request = await loadRequestFromSync()
       if (request) {
-        // setRESTRequest(request)
-        if (!isEqual(request, getRESTRequest())) {
+        if (!isEqualHoppRESTRequest(request, getRESTRequest())) {
           requestForSync.value = request
           confirmSync.value = true
         }
@@ -159,6 +158,7 @@ export default defineComponent({
 
     setupRequestSync(confirmSync, requestForSync)
     bindRequestToURLParams()
+    oAuthURL()
 
     return {
       confirmSync,
